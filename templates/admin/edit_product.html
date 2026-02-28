@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Product - Admin - Lumina Clothing{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                <h2 class="fw-bold m-0">Edit Product: <span class="text-primary">{{ product.name }}</span></h2>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary rounded-pill"><i
+                        class="bi bi-arrow-left"></i> Back to Dashboard</a>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-5">
+                    <form method="POST" class="needs-validation" novalidate id="productForm">
+                        <div class="row g-4">
+                            <!-- Current Image Preview -->
+                            <div class="col-12 text-center mb-4">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="rounded shadow-sm"
+                                    style="max-height: 200px; object-fit: cover;">
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-3" id="name" name="name"
+                                        value="{{ product.name }}" placeholder="Product Name" required>
+                                    <label for="name">Product Name *</label>
+                                    <div class="invalid-feedback">Product name is required.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-3" id="category" name="category"
+                                        value="{{ product.category }}" placeholder="Category" required
+                                        list="categoryOptions">
+                                    <label for="category">Category *</label>
+                                    <datalist id="categoryOptions">
+                                        <option value="T-Shirts">
+                                        <option value="Pants">
+                                        <option value="Jackets">
+                                        <option value="Dresses">
+                                        <option value="Shoes">
+                                        <option value="Accessories">
+                                    </datalist>
+                                    <div class="invalid-feedback">Category is required.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control rounded-3" id="price" name="price"
+                                        value="{{ '%.2f'|format(product.price) }}" placeholder="Price" step="0.01"
+                                        min="0" required>
+                                    <label for="price">Price ($) *</label>
+                                    <div class="invalid-feedback">Valid price is required.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control rounded-3" id="stock" name="stock"
+                                        value="{{ product.stock }}" placeholder="Stock Quantity" min="0" required>
+                                    <label for="stock">Stock Quantity *</label>
+                                    <div class="invalid-feedback">Valid stock quantity is required.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="url" class="form-control rounded-3" id="image_url" name="image_url"
+                                        value="{{ product.image_url }}" placeholder="Image URL">
+                                    <label for="image_url">Image URL</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control rounded-3" id="description" name="description"
+                                        placeholder="Product Description" style="height: 150px"
+                                        required>{{ product.description }}</textarea>
+                                    <label for="description">Product Description *</label>
+                                    <div class="invalid-feedback">Description is required.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-5">
+                                <button type="submit"
+                                    class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-sm hover-lift"><i
+                                        class="bi bi-save me-2"></i> Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

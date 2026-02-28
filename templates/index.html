@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Lumina Clothing{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center text-light d-flex align-items-center mb-5"
+    style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; min-height: 60vh;">
+    <div class="container animate-fade-in">
+        <h1 class="display-3 fw-bold mb-4">Elevate Your Style</h1>
+        <p class="lead mb-5 max-w-2xl mx-auto">Discover our new collection of premium clothing designed for comfort and
+            elegance. Stand out from the crowd.</p>
+        <a href="{{ url_for('shop') }}"
+            class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold text-uppercase shadow-lg hover-scale">Shop
+            Now</a>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="container mb-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-5">Featured Products</h2>
+        <div class="mx-auto bg-primary" style="height: 4px; width: 60px; border-radius: 2px;"></div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm product-card hover-lift">
+                <div class="position-relative overflow-hidden">
+                    <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.name }}"
+                        style="height: 300px; object-fit: cover;">
+                    <div class="product-overlay d-flex align-items-center justify-content-center">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                            class="btn btn-light rounded-pill px-4 fw-bold">Quick View</a>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold mb-1">{{ product.name }}</h5>
+                    <p class="text-muted small mb-2">{{ product.category }}</p>
+                    <p class="card-text fw-bold fs-5 text-primary">${{ "%.2f"|format(product.price) }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-5">
+        <a href="{{ url_for('shop') }}" class="btn btn-outline-dark btn-lg rounded-pill px-5">View All Products</a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="bg-light py-5">
+    <div class="container py-4">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="display-4 text-primary mb-3"><i class="bi bi-truck"></i></div>
+                    <h4 class="fw-bold">Free Shipping</h4>
+                    <p class="text-muted">On all orders over $100.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="display-4 text-primary mb-3"><i class="bi bi-arrow-return-left"></i></div>
+                    <h4 class="fw-bold">Easy Returns</h4>
+                    <p class="text-muted">30-day money-back guarantee.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="display-4 text-primary mb-3"><i class="bi bi-shield-check"></i></div>
+                    <h4 class="fw-bold">Secure Checkout</h4>
+                    <p class="text-muted">100% secure payment processing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

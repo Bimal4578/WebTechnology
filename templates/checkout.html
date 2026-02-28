@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Lumina Clothing{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center border-bottom mb-4 pb-3">
+        <h1 class="fw-bold m-0">Checkout</h1>
+        <a href="{{ url_for('cart') }}" class="text-decoration-none text-muted"><i class="bi bi-arrow-left"></i> Back to
+            Cart</a>
+    </div>
+
+    <div class="row gx-5">
+        <!-- Delivery Details -->
+        <div class="col-lg-7 mb-5">
+            <h4 class="fw-bold mb-4">Shipping Information</h4>
+            <div class="card border-0 shadow-sm rounded-4 mb-5">
+                <div class="card-body p-4">
+                    <form method="POST" id="checkoutForm" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="firstName" class="form-label">First name</label>
+                                <input type="text" class="form-control rounded-3" id="firstName" required>
+                                <div class="invalid-feedback">Valid first name is required.</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="lastName" class="form-label">Last name</label>
+                                <input type="text" class="form-control rounded-3" id="lastName" required>
+                                <div class="invalid-feedback">Valid last name is required.</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control rounded-3" id="email"
+                                    value="{{ current_user.email }}" readonly>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control rounded-3" id="address"
+                                    placeholder="1234 Main St" required>
+                                <div class="invalid-feedback">Please enter your shipping address.</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="address2" class="form-label">Address 2 <span
+                                        class="text-muted">(Optional)</span></label>
+                                <input type="text" class="form-control rounded-3" id="address2"
+                                    placeholder="Apartment or suite">
+                            </div>
+
+                            <div class="col-md-5">
+                                <label for="country" class="form-label">Country</label>
+                                <select class="form-select rounded-3" id="country" required>
+                                    <option value="">Choose...</option>
+                                    <option>United States</option>
+                                    <option>Canada</option>
+                                    <option>United Kingdom</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a valid country.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="state" class="form-label">State</label>
+                                <select class="form-select rounded-3" id="state" required>
+                                    <option value="">Choose...</option>
+                                    <option>California</option>
+                                    <option>New York</option>
+                                    <option>Texas</option>
+                                </select>
+                                <div class="invalid-feedback">Please provide a valid state.</div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="zip" class="form-label">Zip</label>
+                                <input type="text" class="form-control rounded-3" id="zip" required>
+                                <div class="invalid-feedback">Zip code required.</div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="same-address">
+                            <label class="form-check-label" for="same-address">Shipping address is the same as my
+                                billing address</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="save-info">
+                            <label class="form-check-label" for="save-info">Save this information for next time</label>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h4 class="fw-bold mb-4">Payment</h4>
+
+                        <div class="my-3">
+                            <div class="form-check mb-2 border p-3 rounded-3 shadow-sm bg-light">
+                                <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked
+                                    required>
+                                <label class="form-check-label ms-2 fw-bold" for="credit"><i
+                                        class="bi bi-credit-card me-2"></i> Credit / Debit Card</label>
+                            </div>
+                            <div class="form-check mb-2 border p-3 rounded-3 shadow-sm">
+                                <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
+                                <label class="form-check-label ms-2 fw-bold" for="paypal"><i
+                                        class="bi bi-paypal text-primary me-2"></i> PayPal</label>
+                            </div>
+                        </div>
+
+                        <div class="row gy-3">
+                            <div class="col-md-6">
+                                <label for="cc-name" class="form-label">Name on card</label>
+                                <input type="text" class="form-control rounded-3" id="cc-name" placeholder="" required>
+                                <small class="text-muted">Full name as displayed on card</small>
+                                <div class="invalid-feedback">Name on card is required</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="cc-number" class="form-label">Credit card number</label>
+                                <input type="text" class="form-control rounded-3" id="cc-number" placeholder=""
+                                    required>
+                                <div class="invalid-feedback">Credit card number is required</div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="cc-expiration" class="form-label">Expiration</label>
+                                <input type="text" class="form-control rounded-3" id="cc-expiration" placeholder="MM/YY"
+                                    required>
+                                <div class="invalid-feedback">Expiration date required</div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="cc-cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control rounded-3" id="cc-cvv" placeholder="" required>
+                                <div class="invalid-feedback">Security code required</div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <button class="btn btn-primary w-100 btn-lg rounded-pill fw-bold shadow-sm hover-lift"
+                            type="submit"><i class="bi bi-bag-check me-2"></i> Place Order and Pay ${{
+                            "%.2f"|format(total + (0 if total > 100 else 10)) }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-5">
+            <h4 class="fw-bold mb-4">Your Cart</h4>
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for item in cart_items %}
+                        <li class="list-group-item d-flex justify-content-between lh-sm px-0 py-3 border-bottom">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ item.product.image_url }}" alt="..." class="rounded-3 shadow-sm"
+                                    style="width: 50px; height: 50px; object-fit: cover;">
+                                <div class="ms-3">
+                                    <h6 class="my-0 fw-bold">{{ item.product.name }}</h6>
+                                    <small class="text-muted">Qty: {{ item.quantity }}</small>
+                                </div>
+                            </div>
+                            <span class="text-muted fw-bold">${{ "%.2f"|format(item.product.price * item.quantity)
+                                }}</span>
+                        </li>
+                        {% endfor %}
+
+                        <li class="list-group-item d-flex justify-content-between px-0 py-3 bg-transparent">
+                            <span>Subtotal</span>
+                            <span class="fw-bold">${{ "%.2f"|format(total) }}</span>
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between px-0 py-3 text-success bg-transparent border-bottom">
+                            <div class="text-success">
+                                <h6 class="my-0">Shipping</h6>
+                            </div>
+                            <span class="fw-bold">{% if total > 100 %}Free{% else %}$10.00{% endif %}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 py-3 bg-transparent fs-5 border-0 mt-3 pt-3 pb-0"
+                            style="border-top: 2px solid #dee2e6 !important;">
+                            <span class="fw-bold">Total (USD)</span>
+                            <strong class="text-primary fw-bold">${{ "%.2f"|format(total + (0 if total > 100 else 10))
+                                }}</strong>
+                        </li>
+                    </ul>
+
+                    <div class="input-group">
+                        <input type="text" class="form-control rounded-start-pill" placeholder="Promo code">
+                        <button type="button" class="btn btn-secondary rounded-end-pill px-4">Redeem</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

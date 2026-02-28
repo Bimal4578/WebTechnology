@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Shop - Lumina Clothing{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="bg-light py-5 mb-5 border-bottom">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">Shop Our Collection</h1>
+        <p class="lead text-muted">Find the perfect pieces to express your unique style.</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <!-- Sidebar Filter -->
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 100px; z-index: 10;">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Categories</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('shop') }}"
+                            class="list-group-item list-group-item-action border-0 {% if not current_category %}active fw-bold rounded bg-primary text-white{% endif %}">
+                            All Products
+                        </a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('shop', category=category) }}"
+                            class="list-group-item list-group-item-action border-0 {% if current_category == category %}active fw-bold rounded bg-primary text-white{% endif %}">
+                            {{ category }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <!-- Active Filter Status -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <span class="text-muted">Showing {{ products|length }} products {% if current_category %} in <span
+                        class="fw-bold text-dark">{{ current_category }}</span>{% endif %}</span>
+
+                <!-- Simple Sort Dropdown (placeholder for future implementation) -->
+                <select class="form-select w-auto border-0 bg-light" aria-label="Sort by">
+                    <option selected>Sort by: Featured</option>
+                    <option value="1">Price: Low to High</option>
+                    <option value="2">Price: High to Low</option>
+                    <option value="3">Newest Arrivals</option>
+                </select>
+            </div>
+
+            {% if products %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm product-card hover-lift">
+                        <div class="position-relative overflow-hidden">
+                            <img src="{{ product.image_url }}" class="card-img-top product-image"
+                                alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
+                            <div
+                                class="product-overlay d-flex flex-column align-items-center justify-content-center gap-2">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                                    class="btn btn-light rounded-pill px-4 fw-bold">View Details</a>
+                                {% if current_user.is_authenticated %}
+                                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST"
+                                    class="m-0">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold"><i
+                                            class="bi bi-cart-plus me-1"></i> Add to Cart</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% if product.stock < 10 %} <span
+                                class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1">Few Left!</span>
+                                {% elif loop.index <= 2 %} <span
+                                    class="badge bg-dark position-absolute top-0 start-0 m-3 px-2 py-1">New</span>
+                                    {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-1">{{ product.category }}</p>
+                            <h5 class="card-title fw-bold mb-2">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                                    class="text-dark text-decoration-none">{{ product.name }}</a>
+                            </h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="fw-bold fs-5 text-primary">${{ "%.2f"|format(product.price) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination (Placeholder) -->
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link border-0" href="#" tabindex="-1"
+                            aria-disabled="true"><i class="bi bi-chevron-left"></i> Previous</a></li>
+                    <li class="page-item active"><a class="page-link rounded-circle mx-1 border-0" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link rounded-circle mx-1 border-0 text-dark bg-light"
+                            href="#">2</a></li>
+                    <li class="page-item"><a class="page-link rounded-circle mx-1 border-0 text-dark bg-light"
+                            href="#">3</a></li>
+                    <li class="page-item"><a class="page-link border-0 text-dark" href="#">Next <i
+                                class="bi bi-chevron-right"></i></a></li>
+                </ul>
+            </nav>
+
+            {% else %}
+            <div class="text-center py-5">
+                <div class="display-1 text-muted mb-4"><i class="bi bi-search"></i></div>
+                <h3 class="fw-bold">No products found</h3>
+                <p class="text-muted">We couldn't find any products in this category.</p>
+                <a href="{{ url_for('shop') }}" class="btn btn-primary rounded-pill px-4 mt-3">Clear Filters</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Lumina Clothing{% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-light py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold m-0"><i class="bi bi-speedometer2 text-primary me-2"></i> Admin Dashboard</h1>
+            <a href="{{ url_for('admin_add_product') }}"
+                class="btn btn-primary rounded-pill px-4 shadow-sm hover-lift"><i class="bi bi-plus-lg"></i> Add New
+                Product</a>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Stats -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="bg-primary text-white p-3 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px;">
+                            <i class="bi bi-box-seam fs-3"></i>
+                        </div>
+                        <div class="ms-4">
+                            <p class="text-muted mb-0 fw-bold text-uppercase small">Total Products</p>
+                            <h2 class="fw-bold m-0">{{ products|length }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="bg-success text-white p-3 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px;">
+                            <i class="bi bi-people fs-3"></i>
+                        </div>
+                        <div class="ms-4">
+                            <p class="text-muted mb-0 fw-bold text-uppercase small">Total Users</p>
+                            <h2 class="fw-bold m-0">{{ users|length }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="bg-warning text-dark p-3 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px;">
+                            <i class="bi bi-cart-check fs-3"></i>
+                        </div>
+                        <div class="ms-4">
+                            <p class="text-muted mb-0 fw-bold text-uppercase small">Recent Orders</p>
+                            <h2 class="fw-bold m-0">{{ orders|length }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Management -->
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold m-0">Product Inventory</h5>
+                <div class="input-group w-auto">
+                    <input type="text" class="form-control rounded-start-pill" placeholder="Search products...">
+                    <button class="btn btn-outline-secondary rounded-end-pill" type="button"><i
+                            class="bi bi-search"></i></button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td class="ps-4 text-muted">#{{ product.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ product.image_url }}" class="rounded shadow-sm"
+                                            style="width: 40px; height: 40px; object-fit: cover;">
+                                        <span class="ms-3 fw-bold">{{ product.name }}</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">{{ product.category }}</span></td>
+                                <td class="fw-bold">${{ "%.2f"|format(product.price) }}</td>
+                                <td>
+                                    {% if product.stock > 10 %}
+                                    <span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i> {{
+                                        product.stock }}</span>
+                                    {% elif product.stock > 0 %}
+                                    <span class="text-warning fw-bold"><i class="bi bi-exclamation-triangle me-1"></i>
+                                        {{ product.stock }}</span>
+                                    {% else %}
+                                    <span class="text-danger fw-bold"><i class="bi bi-x-circle me-1"></i> 0</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('admin_edit_product', product_id=product.id) }}"
+                                            class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                        <form action="{{ url_for('admin_delete_product', product_id=product.id) }}"
+                                            method="POST" class="d-inline"
+                                            onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger shadow-none"><i
+                                                    class="bi bi-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not products %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">No products found.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top py-3 text-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item disabled"><a class="page-link border-0" href="#">Previous</a></li>
+                        <li class="page-item active"><a class="page-link rounded-circle mx-1 border-0" href="#">1</a>
+                        </li>
+                        <li class="page-item"><a class="page-link border-0" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Recent Orders (Informational only) -->
+        <h4 class="fw-bold mb-3 mt-5">Recent Orders</h4>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-4">Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders[:5] %}
+                            <tr>
+                                <td class="ps-4 text-muted fw-bold">#{{ order.id }}</td>
+                                <td>{{ order.user.username }}</td>
+                                <td class="text-muted">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td class="fw-bold">${{ "%.2f"|format(order.total_price) }}</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            {% endfor %}
+                            {% if not orders %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">No orders found.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

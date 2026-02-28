@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Lumina Clothing{% endblock %}
+
+{% block content %}
+<div class="bg-light py-3 mb-4">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop') }}" class="text-decoration-none">Shop</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('shop', category=product.category) }}"
+                        class="text-decoration-none">{{ product.category }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row gx-5">
+        <!-- Product Image -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 rounded-4 overflow-hidden shadow-sm">
+                <img src="{{ product.image_url }}" class="img-fluid w-100" alt="{{ product.name }}"
+                    style="min-height: 500px; object-fit: cover;">
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+            <div class="ps-md-4">
+                <p class="text-muted text-uppercase small fw-bold tracking-wide mb-2">{{ product.category }}</p>
+                <h1 class="display-5 fw-bold mb-3">{{ product.name }}</h1>
+                <h2 class="text-primary fw-bold mb-4">${{ "%.2f"|format(product.price) }}</h2>
+
+                <p class="lead mb-4">{{ product.description }}</p>
+
+                <div class="mb-4 d-flex align-items-center">
+                    <span class="me-3 fw-bold">Availability:</span>
+                    {% if product.stock > 10 %}
+                    <span class="badge bg-success py-2 px-3"><i class="bi bi-check-circle me-1"></i> In Stock ({{
+                        product.stock }})</span>
+                    {% elif product.stock > 0 %}
+                    <span class="badge bg-warning text-dark py-2 px-3"><i class="bi bi-exclamation-triangle me-1"></i>
+                        Low Stock ({{ product.stock }})</span>
+                    {% else %}
+                    <span class="badge bg-danger py-2 px-3"><i class="bi bi-x-circle me-1"></i> Out of Stock</span>
+                    {% endif %}
+                </div>
+
+                <hr class="my-4">
+
+                {% if product.stock > 0 %}
+                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mb-5">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-auto">
+                            <label for="quantity" class="form-label fw-bold">Quantity</label>
+                            <div class="input-group" style="width: 140px;">
+                                <button class="btn btn-outline-secondary px-3" type="button"
+                                    onclick="document.getElementById('quantity').stepDown()">-</button>
+                                <input type="number" id="quantity" name="quantity"
+                                    class="form-control text-center text-dark fw-bold" value="1" min="1"
+                                    max="{{ product.stock }}">
+                                <button class="btn btn-outline-secondary px-3" type="button"
+                                    onclick="document.getElementById('quantity').stepUp()">+</button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            {% if current_user.is_authenticated %}
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm hover-lift"><i
+                                    class="bi bi-cart-plus me-2"></i> Add to Cart</button>
+                            {% else %}
+                            <a href="{{ url_for('login') }}"
+                                class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm hover-lift">Login to Add to
+                                Cart</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+                {% else %}
+                <div class="alert alert-danger" role="alert">
+                    This item is currently out of stock. Please check back later!
+                </div>
+                {% endif %}
+
+                <!-- Product Information Accordion -->
+                <div class="accordion accordion-flush bg-light p-3 rounded-4" id="productAccordion">
+                    <div class="accordion-item bg-transparent">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button bg-transparent fw-bold" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                                aria-controls="collapseOne">
+                                Shipping & Returns
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                            data-bs-parent="#productAccordion">
+                            <div class="accordion-body text-muted small">
+                                Free standard shipping on all orders over $100. Deliveries take 3-5 business days. We
+                                accept returns within 30 days of purchase for a full refund.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-transparent">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button bg-transparent collapsed fw-bold" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                                aria-controls="collapseTwo">
+                                Care Instructions
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                            data-bs-parent="#productAccordion">
+                            <div class="accordion-body text-muted small">
+                                Machine wash cold with like colors. Tumble dry low. Do not bleach. Iron on low heat if
+                                needed.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
