@@ -25,6 +25,34 @@ def load_user(user_id):
 
 # --- Routes ---
 
+@app.before_request
+def setup_database():
+    # Only run this once
+    if getattr(app, '_database_initialized', False):
+        return
+        
+    db.create_all()
+    # Create an admin user if missing
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin', email='admin@example.com', is_admin=True)
+        admin.set_password('adminpass')
+        db.session.add(admin)
+    
+    # Add dummy products if missing
+    if Product.query.count() == 0:
+        products = [
+            Product(name="Classic T-Shirt", description="A comfortable cotton t-shirt.", price=19.99, category="T-Shirts", stock=100, image_url="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"),
+            Product(name="Denim Jeans", description="Durable blue jeans.", price=49.99, category="Pants", stock=50, image_url="https://images.unsplash.com/photo-1542272604-780c8d10333d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"),
+            Product(name="Leather Jacket", description="Stylish leather jacket.", price=129.99, category="Jackets", stock=20, image_url="https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"),
+            Product(name="Summer Dress", description="Light and breezy dress.", price=39.99, category="Dresses", stock=30, image_url="https://images.unsplash.com/photo-1515347619152-16782eb06a6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"),
+            Product(name="Running Shoes", description="Comfortable sneakers.", price=79.99, category="Shoes", stock=40, image_url="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"),
+            Product(name="Winter Scarf", description="Warm wool scarf.", price=24.99, category="Accessories", stock=60, image_url="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60")
+        ]
+        db.session.bulk_save_objects(products)
+        
+    db.session.commit()
+    app._database_initialized = True
+
 @app.route('/')
 def index():
     featured_products = Product.query.limit(4).all()
